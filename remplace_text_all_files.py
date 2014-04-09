@@ -29,12 +29,12 @@ def remplace_text(text):
             return 1
     return 0
 
-def analice(dire):
+def analyze(dire):
     for dirname, dirnames, filenames in os.walk(dire):
         for subdirname in dirnames:
             new_dire=str(os.path.join(dirname, subdirname)+"/")
             print new_dire
-            analice(new_dire)
+            analyze(new_dire)
 
         for filename in filenames:
             filename=str(dire+filename)
@@ -46,4 +46,4 @@ def analice(dire):
                 new_file(filename,valor)
                 print("Remplazado correctamente en el fichero %s"%(filename))
 
-analice(DIRECTORIO)
+analyze(DIRECTORIO)
