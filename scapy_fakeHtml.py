@@ -24,7 +24,7 @@ def doopts():
     parser = OptionParser(usage=usg)
 
     parser.add_option('-p', '--port', dest='port',
-                                        metavar='PORT', default=12345,
+                                        metavar='PORT', default=80,
                                         help='Port to send your msg')
 
     parser.add_option('-d', '--dst', dest='dst',
@@ -39,31 +39,51 @@ def prepareLen(options):
 	text=str(datetime.now())+"\n\t"+ip
 	return text
 
+def sendPacket(p,options):
+	#p.show()
+
+	if p[IP].dst==options.dst:
+		#print p[IP].dst
+		if p.haslayer('Raw'):
+			print p.getlayer(Raw).load
+			#print p['Raw'].load.find("<html")
+			#print p['Raw'].load
+			if p['Raw'].load.find("<html")>0:
+				if p['Raw'].load.find("<img src='http://imagenes.es.sftcdn.net/es/scrn/69000/69838/python-20.jpg'></body>")<0:
+					print p['Raw'].load
+					print p['Raw'].load.replace("</body>", "<img src='http://imagenes.es.sftcdn.net/es/scrn/69000/69838/python-20.jpg'></body>");
+			#p['Raw'].load="HOlaaa"
+					sendp(p)
+	"""
+	if p.getlayer(IP).dst != options.dst:
+		return False
+	print p.getlayer(IP).src
+	print p.getlayer(IP).dst
+	print p.getlayer(Raw).load
+	"""
+	#pack=IP(src=p.getlayer(IP).src,dst=p.getlayer(IP).dst)/TCP(sport=RandShort(),dport=int(options.port),flags="S",seq=12345)/str("HOLAAAA")
+	#send(pack, verbose=0)
+	#send(pack, verbose=0)
+	#return True
+
 def waitToResponse(options):
-	while True:
-		try:
-			p = sniff(count=1,filter="tcp and port "+str(options.port))
+	#while True:
+	try:
+		sniff(filter="tcp and port "+str(options.port),prn=lambda x:sendPacket(x,options))
+		"""
 			if len(p)<=0:
 				continue
 			if not hasattr(p[0].getlayer(Raw), 'load'):
 				continue
 			if not hasattr(p[0].getlayer(IP), 'src'):
 				continue
-			rawLoad = p[0].getlayer(Raw).load
-			ip=p[0].getlayer(IP).src
-			print prepareLen(options)+" (NaN) => "+rawLoad
-			break
-		except Exception, e:
-			raise
-
-def sendPacket(options):
-	while True:
-		ipr=RandIP()
-		mensaje = raw_input("%s (You) => " % prepareLen(options))
-		pack=IP(src=ipr,dst=str(options.dst))/TCP(sport=RandShort(),dport=int(options.port),flags="S",seq=12345)/str(mensaje)
-		send(pack, verbose=0)
-		print "..."
-		waitToResponse(options)
+			#rawLoad = p[0].getlayer(Raw).load
+			#ip=p[0].getlayer(IP).src
+			#print prepareLen(options)+" (NaN) => "+rawLoad
+			return p[0]
+		"""
+	except Exception, e:
+		raise
 
 def validate(options):
 	if not options.dst:
@@ -75,7 +95,13 @@ def main():
 	(options, args) = parser.parse_args()
 	validate(options)
 	os.system("clear")
-	print options
-	sendPacket(options)
-
+	#while True:
+	print "..."
+	p=waitToResponse(options)
+	"""
+		if p.getlayer(IP).dst == options.dst:
+			print "Capturado"
+			if sendPacket(p,options):
+				print "Enviado"
+	"""
 main()
