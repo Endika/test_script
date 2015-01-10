@@ -22,8 +22,8 @@ def doopts():
     usg = textwrap.dedent(usg) % program
     parser = OptionParser(usage=usg)
 
-    parser.add_option('-p', '--upload', dest='upload',
-                      metavar='UPLOAR', default=12345,
+    parser.add_option('-u', '--upload', dest='upload',
+                      metavar='UPLOAD', default=None,
                       help='Upload your directory o file')
 
     parser.add_option('-d', '--download', dest='download',
@@ -35,14 +35,15 @@ def doopts():
 def map():
     parser = doopts()
     (options, args) = parser.parse_args()
+
     if options.upload:
-        print "--upload argument is not defined"
-        exit(0)
+        conf['UPLOAD'] = options.upload
     if options.download:
+        conf['DOWNLOAD'] = options.download
+    if not options.upload and not options.download:
+        print "--upload argument is not defined"
         print "--download argument is not defined"
         exit(0)
-    conf['UPLOAD'] = options.upload
-    conf['DOWNLOAD'] = options.download
 
 
 def _upload_local_dir(dire, dp_cli):
