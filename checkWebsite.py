@@ -81,7 +81,7 @@ for web in websites:
         text = date + " " + status + " " + web + " " + websites[web]
         msg += "<p>" + text + img + "</p>"
         print text
-        _registrar(msg)
+        _registrar(text)
         browser.close()
     except Exception, e:
         browser.close()
