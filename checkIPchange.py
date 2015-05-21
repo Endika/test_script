@@ -63,7 +63,7 @@ def main():
     while len(newip) < 7 and coint > 0:
         os.system('dig +short myip.opendns.com @resolver1.opendns.com > %s'
                   % (_CONF['FILE_TMP']))
-        # os.system("curl ifconfig.me > oldIP.tmp")
+        # os.system("curl ifconfig.me > %s" % (_CONF['FILE_TMP']))
         newip = leer()
         coint -= 1
     if coint == 0:
