@@ -10,6 +10,7 @@ g++-4.9 -Wall -std=c++14 checkWebsite.cpp -o checkWebsite
 #include <ctime>
 
 std::string time_now();
+std::string cmd(std::string command);
 
 class Website {
 public:
@@ -52,6 +53,19 @@ std::string time_now(){
   return str;
 }
 
+std::string cmd(std::string command){
+  std::string text = "";
+  FILE* fp;
+  char result [1000000];
+  fp = popen(command.c_str(), "r");
+  fread(result, 1, sizeof(result), fp);
+  fclose(fp);
+  for(int i=0; i < 1000000; i++){
+      text += result[i];
+  }
+  return text;
+}
+
 Website::Website(std::string url, std::string compare_text){
   this->url = url;
   this->compare_text = compare_text;
@@ -63,14 +77,7 @@ bool Website::check_status(){
               command = "curl " + this->url + " -s --insecure  " +
                         "| grep '" + this->compare_text + "'";
   std::size_t found;
-  FILE* fp;
-  char result [1000000];
-  fp = popen(command.c_str(),"r");
-  fread(result,1,sizeof(result),fp);
-  fclose (fp);
-  for(int i=0;i<1000000;i++){
-      text += result[i];
-  }
+  text = cmd(command);
   found = text.find(this->compare_text);
   if(found!=std::string::npos){
     //std::cout << "ON" << std::endl;
@@ -81,4 +88,3 @@ bool Website::check_status(){
   }
   return status;
 }
-
