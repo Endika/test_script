@@ -8,9 +8,7 @@ g++-4.9 -Wall -std=c++14 checkWebsite.cpp -o checkWebsite
 #include <iostream>
 #include <string>
 #include <ctime>
-
-std::string time_now();
-std::string cmd(std::string command);
+#include "to.cpp"
 
 class Website {
 public:
@@ -29,9 +27,10 @@ Website webs_lts[2] = {
 
 int main(){
     //system("curl endikaiglesias.com");
+    To to = To();
     for(int i = 1; i >= 0; i--){
       Website web = webs_lts[i];
-      std::cout << time_now() << " Check: ";
+      std::cout << to.time_now() << " Check: ";
       if(web.check_status()){
         std::cout << "ON";
       }else{
@@ -40,30 +39,6 @@ int main(){
       std::cout << " -> " << web.url << std::endl;
     }
     return 0;
-}
-
-std::string time_now(){
-  time_t rawtime;
-  struct tm * timeinfo;
-  char buffer[80];
-  time (&rawtime);
-  timeinfo = localtime(&rawtime);
-  strftime(buffer, 80, "%d-%m-%Y %I:%M:%S", timeinfo);
-  std::string str(buffer);
-  return str;
-}
-
-std::string cmd(std::string command){
-  std::string text = "";
-  FILE* fp;
-  char result [1000000];
-  fp = popen(command.c_str(), "r");
-  fread(result, 1, sizeof(result), fp);
-  fclose(fp);
-  for(int i=0; i < 1000000; i++){
-      text += result[i];
-  }
-  return text;
 }
 
 Website::Website(std::string url, std::string compare_text){
@@ -76,8 +51,9 @@ bool Website::check_status(){
   std::string text = "",
               command = "curl " + this->url + " -s --insecure  " +
                         "| grep '" + this->compare_text + "'";
+  To to = To();
   std::size_t found;
-  text = cmd(command);
+  text = to.cmd(command);
   found = text.find(this->compare_text);
   if(found!=std::string::npos){
     //std::cout << "ON" << std::endl;
