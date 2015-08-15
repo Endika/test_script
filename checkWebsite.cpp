@@ -8,7 +8,7 @@ g++-4.9 -Wall -std=c++14 checkWebsite.cpp -o checkWebsite
 #include <iostream>
 #include <string>
 #include <ctime>
-#include "to.cpp"
+#include "to.h"
 
 class Website {
 public:
